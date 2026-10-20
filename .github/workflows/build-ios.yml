@@ -1,0 +1,47 @@
+name: Build iOS (Simulator)
+
+# Builds for the iOS Simulator only -- there is no Apple Developer account/signing certificate
+# configured for this repo, and Apple doesn't allow an unsigned build to run on a real device at
+# all (unlike Android's debug APK, or the desktop apps' unsigned installers). This proves the app
+# actually builds and runs; it does NOT produce anything installable on a real iPhone or
+# publishable to TestFlight/the App Store. See the README for what real device distribution needs.
+on:
+  push:
+    branches: [main]
+    paths: ["ios/**", ".github/workflows/build-ios.yml"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: npm install
+        working-directory: ios
+        run: npm install
+
+      - name: Sync Capacitor
+        working-directory: ios
+        run: npx cap sync ios
+
+      - name: pod install
+        working-directory: ios/ios/App
+        run: pod install
+
+      - name: Build for Simulator
+        working-directory: ios/ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App \
+            -sdk iphonesimulator -configuration Debug \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+      - name: Also keep as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: graktor-ios-simulator-build
+          path: ios/ios/App/build/Build/Products/Debug-iphonesimulator/App.app

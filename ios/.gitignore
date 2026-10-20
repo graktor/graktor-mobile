@@ -1,0 +1,9 @@
+node_modules/
+
+# Xcode / CocoaPods build output and caches
+ios/App/Pods/
+ios/App/build/
+ios/DerivedData/
+ios/.xcode.env.local
+*.xcuserstate
+xcuserdata/

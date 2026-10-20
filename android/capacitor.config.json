@@ -1,0 +1,12 @@
+{
+  "appId": "com.zendoriaventures.graktor",
+  "appName": "Graktor",
+  "webDir": "www",
+  "server": {
+    "url": "https://app.graktor.com",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
